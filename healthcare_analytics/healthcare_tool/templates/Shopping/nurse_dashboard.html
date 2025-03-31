@@ -1,0 +1,47 @@
+{% extends 'shopping/layouts/main.html' %}
+
+{% block title %}Nurse Dashboard{% endblock title %}
+
+{% block content %}
+<section class="bg-light p-4">
+    <h2 class="text-center" style="margin-top: 40px">Nurse Dashboard</h2>
+    <hr>
+    <h4>Patient Details</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Doctor</th>
+                <th>Department</th>
+                <th>Current Medication</th>
+                <th>Update Medication</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+            <tr>
+                <td>{{ patient.name }}</td>
+                <td>
+                  {% if patient.doctor %}
+                    {{ patient.doctor.user.username }}
+                  {% else %}
+                    Not Assigned
+                  {% endif %}
+                </td>
+                <td>
+                  {% if patient.department %}
+                    {{ patient.department.name }}
+                  {% else %}
+                    Not Assigned
+                  {% endif %}
+                </td>
+                <td>{{ patient.medication|default:"Not Set" }}</td>
+                <td>
+                    <a href="{% url 'update_medication' patient.id %}" class="btn btn-sm btn-success">Update</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock content %}

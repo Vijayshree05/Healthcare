@@ -1,0 +1,27 @@
+{% extends 'shopping/layouts/main.html' %}
+
+{% block title %}Doctor List{% endblock title %}
+
+{% block content %}
+<h2>Doctor List</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Current Department</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for doctor in doctors %}
+    <tr>
+      <td>{{ doctor.user.username }}</td>
+      <td>{{ doctor.department.name }}</td>
+      <td>
+        <a href="{% url 'update_doctor_department' doctor.id %}" class="btn btn-primary btn-sm">Update Department</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

@@ -1,0 +1,22 @@
+{% extends 'shopping/layouts/main.html' %}
+
+{% block title %}Update Medication{% endblock title %}
+
+{% block content %}
+<section class="bg-light p-4">
+    <h2 class="text-center">Update Medication for {{ patient.name }}</h2>
+    <hr>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Current Medication: </label>
+            <input type="text" class="form-control" value="{{ patient.medication }}" disabled>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">New Medication:</label>
+            <input type="text" class="form-control" name="medication" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Medication</button>
+    </form>
+</section>
+{% endblock content %}

@@ -1,0 +1,13 @@
+{% extends 'shopping/layouts/main.html' %}
+
+{% block title %}Patient Detail{% endblock title %}
+
+{% block content %}
+<h2 style="margin-top: 100px;">Patient Detail: {{ patient.name }}</h2>
+<p><strong>Age:</strong> {{ patient.age }}</p>
+<p><strong>Gender:</strong> {{ patient.gender }}</p>
+<p><strong>Symptoms:</strong> {{ patient.symptoms }}</p>
+<p><strong>Status:</strong> {{ patient.status }}</p>
+<!-- Add additional treatment history or details as needed -->
+<a href="{% url 'doctor_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+{% endblock content %}

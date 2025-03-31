@@ -1,0 +1,78 @@
+{% extends 'shopping/layouts/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h6 class="text-center">Admin Dashboard</h6>
+
+    <form method="get" action="">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label for="department">Select Department:</label>
+                <select name="department" id="department" class="form-control">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept.id }}" {% if selected_department and selected_department.id == dept.id %}selected{% endif %}>{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="days">Predict for Days:</label>
+                <input type="number" name="days" id="days" class="form-control" value="{{ days }}" min="1" max="30">
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Predict</button>
+        </div>
+    </form>
+
+    <div class="row mt-4 d-flex justify-content-center" >
+        <div class="col-md-2">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header" style="color:black">Total Beds</div>
+                <div class="card-body" >
+                    <h5 class="card-title" >{{ total_beds }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header" style="color:black">Occupied Beds</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ allocated_beds }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header" style="color:black">Total Doctors</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ total_doctors }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header" style="color:black">Total Patients</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ total_patients }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-header" style="color:black">Total Nurses</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ total_nurses }}</h5>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+
+    <div class="text-center mt-4">
+        <h4>Bed and Staff Prediction Chart</h4>
+        <img src="{% static '/bed_prediction.png' %}" class="img-fluid" alt="Prediction Chart">
+    </div>
+</div>
+{% endblock %}

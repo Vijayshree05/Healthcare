@@ -1,0 +1,24 @@
+{% extends 'shopping/layouts/main.html' %}
+{% block title %}All Beds{% endblock title %}
+{% block content %}
+<h2>Bed List</h2>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Department</th>
+      <th>Occupied?</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for bed in beds %}
+    <tr>
+      <td>{{ bed.id }}</td>
+      <td>{{ bed.department.name }}</td>
+      <td>{{ bed.is_occupied }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'create_bed' %}" class="btn btn-success">Create New Bed</a>
+{% endblock content %}

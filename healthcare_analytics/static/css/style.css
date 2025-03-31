@@ -1,0 +1,225 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap');
+
+html {
+  font-size: 14px; /* Base font size */
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  background: url("{% static 'images/background.jpg' %}") no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none; /* Remove default underline for links */
+  color: inherit; /* Ensure links inherit color */
+}
+
+a:hover {
+  text-decoration: underline; /* Underline links on hover */
+}
+
+/* Carousel Styles */
+.carousel-item img {
+  object-fit: cover; /* Ensure images cover the container */
+  object-position: top; /* Align image to top */
+  height: 60vh; /* Set height to 60% of the viewport */
+  overflow: hidden; /* Hide any overflow */
+}
+
+/* Price Styles */
+.old_price {
+  font-weight: bold;
+  color: red;
+}
+
+.new_price {
+  font-weight: bold;
+  background-color: green;
+  color: white;
+  padding: 2px;
+  border-radius: 5px;
+  margin-bottom: 2px;
+}
+
+/* Box Styles */
+.pic-box {
+  position: relative;
+}
+
+.hot {
+  background-color: orangered;
+  color: white;
+  width: 50px;
+  text-align: center;
+  font-weight: bold;
+  display: inline;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  z-index: 10;
+}
+
+/* Button Styles */
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Form Styles */
+form {
+  margin: 20px 0;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f1f1f1;
+  text-align: left;
+}
+
+table td {
+  background-color: #fff;
+}
+
+/* Modal Styles */
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.modal-header {
+  border-bottom: 1px solid #ddd;
+}
+
+.modal-footer {
+  border-top: 1px solid #ddd;
+}
+
+.modal-footer button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-footer button:hover {
+  background-color: #218838;
+}
+
+/* Card Styles */
+.card {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.card-header {
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-footer {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.card-footer .btn {
+  padding: 5px 10px;
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: #007bff;
+  padding: 10px;
+}
+
+.navbar a {
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  text-transform: uppercase;
+}
+
+.navbar a:hover {
+  background-color: #0056b3;
+  border-radius: 5px;
+}
+
+/* Footer Styles */
+footer {
+  background-color: #343a40;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+footer a {
+  color: #ffc107;
+}
+
+footer a:hover {
+  color: #ffffff;
+}
