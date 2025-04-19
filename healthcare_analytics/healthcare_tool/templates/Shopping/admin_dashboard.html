@@ -2,77 +2,197 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
-    <h6 class="text-center">Admin Dashboard</h6>
+<style>
+  * {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
 
-    <form method="get" action="">
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label for="department">Select Department:</label>
-                <select name="department" id="department" class="form-control">
-                    <option value="">All Departments</option>
-                    {% for dept in departments %}
-                        <option value="{{ dept.id }}" {% if selected_department and selected_department.id == dept.id %}selected{% endif %}>{{ dept.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="days">Predict for Days:</label>
-                <input type="number" name="days" id="days" class="form-control" value="{{ days }}" min="1" max="30">
-            </div>
-        </div>
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">Predict</button>
-        </div>
-    </form>
+  .dashboard-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+  }
 
-    <div class="row mt-4 d-flex justify-content-center" >
-        <div class="col-md-2">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-header" style="color:black">Total Beds</div>
-                <div class="card-body" >
-                    <h5 class="card-title" >{{ total_beds }}</h5>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-header" style="color:black">Occupied Beds</div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ allocated_beds }}</h5>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-header" style="color:black">Total Doctors</div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ total_doctors }}</h5>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-header" style="color:black">Total Patients</div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ total_patients }}</h5>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-white bg-danger mb-3">
-                <div class="card-header" style="color:black">Total Nurses</div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ total_nurses }}</h5>
-                </div>
-            </div>
-        </div>
+  .form-card {
+    flex: 1;
+    max-width: 450px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: #f8f9fa;
+  }
+
+  .form-card h5 {
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .form-section label {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .form-section .form-group {
+    margin-bottom: 20px;
+  }
+
+  .predict-button button {
+    padding: 10px 25px;
+    border-radius: 10px;
+    background-color: #1e90ff;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0, 0, 0);
+    transition: background-color 0.3s ease;
+  }
+
+  .predict-button button:hover {
+    background-color: #176ed1;
+  }
+
+  .cards-section {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 180px);
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .cards-section a {
+    text-decoration: none;
+  }
+
+  .card {
+    min-height: 110px;
+    height: 110px;
+    width: 180px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .card .card-header {
+    color: #333;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+
+  .card .card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #111;
+  }
+
+  .card.bg-soft-blue { background-color: #dbeafe; }
+  .card.bg-soft-green { background-color: #dbeafe; }
+  .card.bg-soft-yellow { background-color:#dbeafe; }
+  .card.bg-soft-red { background-color: #dbeafe; }
+
+  .chart-section {
+    width: 100%;
+    margin-top: 40px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0);
+    text-align: center;
     
-    </div>
+  }
 
-    <div class="text-center mt-4">
-        <h4>Bed and Staff Prediction Chart</h4>
-        <img src="{% static '/bed_prediction.png' %}" class="img-fluid" alt="Prediction Chart">
+  .chart-section h2 {
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+</style>
+
+<div class="container mt-4">
+  <h6 class="text-center">Admin Dashboard</h6>
+
+  <form method="get" action="">
+    <div class="dashboard-container">
+      <!-- Left: Form in Card -->
+      <div class="form-card">
+        <div class="form-section">
+          <div class="form-group">
+            <label for="department">Select Department:</label>
+            <select name="department" id="department" class="form-control">
+              <option value="">All Departments</option>
+              {% for dept in departments %}
+                <option value="{{ dept.id }}" {% if selected_department and selected_department.id == dept.id %}selected{% endif %}>
+                  {{ dept.name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="days">Predict for Days:</label>
+            <input type="number" name="days" id="days" class="form-control" value="{{ days }}" min="1" max="30">
+          </div>
+
+          <div class="form-group predict-button">
+            <button type="submit" class="btn">Predict</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Info Cards with Tooltips -->
+      <div class="cards-section">
+        <a href="{% url 'beds_detail' %}?department={{ selected_department.id }}" data-bs-toggle="tooltip" title="Shows allocated and total bed count in the selected department">
+          <div class="card bg-soft-blue">
+            <div class="card-header">Total Beds</div>
+            <div class="card-title">{{ allocated_beds }}/{{ total_beds }}</div>
+          </div>
+        </a>
+
+        <a href="{% url 'doctors_detail' %}?department={{ selected_department.id }}" data-bs-toggle="tooltip" title="View number of doctors available in the selected department">
+          <div class="card bg-soft-green">
+            <div class="card-header">Total Doctors</div>
+            <div class="card-title">{{ total_doctors }}</div>
+          </div>
+        </a>
+
+        <a href="{% url 'patients_detail' %}?department={{ selected_department.id }}" data-bs-toggle="tooltip" title="Shows total patients assigned to the selected department">
+          <div class="card bg-soft-yellow">
+            <div class="card-header">Total Patients</div>
+            <div class="card-title">{{ total_patients }}</div>
+          </div>
+        </a>
+
+        <a href="{% url 'nurses_detail' %}" data-bs-toggle="tooltip" title="Check nurse staffing levels across all departments">
+          <div class="card bg-soft-red">
+            <div class="card-header">Total Nurses</div>
+            <div class="card-title">{{ total_nurses }}</div>
+          </div>
+        </a>
+      </div>
     </div>
+  </form>
+
+  <!-- Graph Section -->
+  <div class="chart-section">
+    <h3>Bed and Staff Prediction Chart</h3>
+    {{ plot_div|safe }}
+  </div>
 </div>
+
+<!-- Tooltip JS Init -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+</script>
 {% endblock %}

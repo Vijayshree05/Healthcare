@@ -1,13 +1,68 @@
 {% extends 'shopping/layouts/main.html' %}
+{% load static %}
 
 {% block title %}Patient Detail{% endblock title %}
 
 {% block content %}
-<h2 style="margin-top: 100px;">Patient Detail: {{ patient.name }}</h2>
-<p><strong>Age:</strong> {{ patient.age }}</p>
-<p><strong>Gender:</strong> {{ patient.gender }}</p>
-<p><strong>Symptoms:</strong> {{ patient.symptoms }}</p>
-<p><strong>Status:</strong> {{ patient.status }}</p>
-<!-- Add additional treatment history or details as needed -->
-<a href="{% url 'doctor_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container d-flex align-items-center justify-content-center" style="margin-top: 90px; min-height: 80vh; font-family: 'Poppins', sans-serif;">
+  <div class="glass-card p-5">
+
+    <!-- Heading -->
+    <h2 class="text-center mb-4" style="font-weight: 600; color: #070707;">
+      <i class="fas fa-user-injured me-2"></i>Patient Details
+    </h2>
+
+    <hr style="border-color:#b8bfc2; margin-bottom: 30px;">
+
+    <!-- Patient Info -->
+    <p><strong><i class="fas fa-user me-2 text-primary"></i>Name:</strong> {{ patient.name }}</p>
+    <p><strong><i class="fas fa-calendar-alt me-2 text-success"></i>Age:</strong> {{ patient.age }}</p>
+    <p><strong><i class="fas fa-venus-mars me-2 text-warning"></i>Gender:</strong> {{ patient.gender }}</p>
+    <p><strong><i class="fas fa-stethoscope me-2 text-danger"></i>Symptoms:</strong> {{ patient.symptoms }}</p>
+    <p><strong><i class="fas fa-heartbeat me-2 text-info"></i>Status:</strong> {{ patient.status }}</p>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+      <a href="{% url 'doctor_dashboard' %}" class="btn btn-secondary px-4 py-2 rounded-3">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Glassmorphism Card Style -->
+<style>
+  .glass-card {
+    position: relative;
+    padding: 40px;
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0);
+    color: #333;
+    width: 90%;
+    max-width: 600px;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("{% static 'images/cardbg.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.3;
+    z-index: -1;
+  }
+  p{
+    font-size:1.2rem;
+  }
+</style>
 {% endblock content %}

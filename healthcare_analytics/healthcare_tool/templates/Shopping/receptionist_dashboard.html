@@ -1,29 +1,93 @@
 {% extends 'shopping/layouts/main.html' %}
+{% load static %}
+
 {% block title %}Receptionist Dashboard{% endblock title %}
+
 {% block content %}
-<h2 class="mb-4"style="margin-top: 100px">Receptionist Dashboard</h2>
-<form method="POST" class="mb-4">
-  {% csrf_token %}
-  <div class="form-group">
-    <label for="name">Patient Name</label>
-    <input type="text" name="name" id="name" class="form-control" required>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container d-flex align-items-center justify-content-center" style="margin-top: 90px; min-height: 80vh; font-family: 'Poppins', sans-serif;">
+  <div class="glass-card p-5">
+
+    <!-- Heading -->
+    <h2 class="text-center mb-4" style="font-weight: 600; color: #28a745;">
+      <i class="fas fa-user-plus me-2"></i>Receptionist Dashboard
+    </h2>
+
+    <hr style="border-color:#b8bfc2; margin-bottom: 30px;">
+
+    <!-- Patient Registration Form -->
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="mb-4">
+        <label for="name" class="form-label fw-semibold">
+          <i class="fas fa-user me-2 text-primary"></i>Patient Name
+        </label>
+        <input type="text" name="name" id="name" class="form-control px-4 py-2 rounded-4" required>
+      </div>
+
+      <div class="mb-4">
+        <label for="age" class="form-label fw-semibold">
+          <i class="fas fa-hourglass-start me-2 text-success"></i>Age
+        </label>
+        <input type="number" name="age" id="age" class="form-control px-4 py-2 rounded-4" required>
+      </div>
+
+      <div class="mb-4">
+        <label for="gender" class="form-label fw-semibold">
+          <i class="fas fa-venus-mars me-2 text-warning"></i>Gender
+        </label>
+        <select name="gender" id="gender" class="form-control px-4 py-2 rounded-4" required>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label for="symptoms" class="form-label fw-semibold">
+          <i class="fas fa-notes-medical me-2 text-danger"></i>Symptoms
+        </label>
+        <textarea name="symptoms" id="symptoms" class="form-control px-4 py-2 rounded-4" required></textarea>
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success rounded-4 py-2">
+          <i class="fas fa-check-circle me-2"></i>Register Patient
+        </button>
+      </div>
+    </form>
   </div>
-  <div class="form-group">
-    <label for="age">Age</label>
-    <input type="number" name="age" id="age" class="form-control" required>
-  </div>
-  <div class="form-group">
-    <label for="gender">Gender</label>
-    <select name="gender" id="gender" class="form-control" required>
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-      <option value="Other">Other</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="symptoms">Symptoms</label>
-    <textarea name="symptoms" id="symptoms" class="form-control" required></textarea>
-  </div>
-  <button type="submit" class="btn btn-success">Register Patient</button>
-</form>
+</div>
+
+<!-- Glassmorphism Card Style -->
+<style>
+  .glass-card {
+    position: relative;
+    padding: 40px;
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    color: #333;
+    width: 90%;
+    max-width: 600px;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("{% static 'images/cardbg.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.3;
+    z-index: -1;
+  }
+</style>
 {% endblock content %}

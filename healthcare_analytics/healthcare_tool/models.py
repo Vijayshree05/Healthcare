@@ -41,7 +41,12 @@ class Doctor(models.Model):
     def __str__(self):
         return f"Dr. {self.user.username} - {self.department.name}"
 
-
+class Bed(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    is_occupied = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"Bed in {self.department.name} - {'Occupied' if self.is_occupied else 'Available'}"
 # Patient model
 class Patient(models.Model):
     name = models.CharField(max_length=100)
@@ -58,7 +63,7 @@ class Patient(models.Model):
     discharged_at = models.DateTimeField(null=True, blank=True)
     # Add medication field
     medication = models.CharField(max_length=200, blank=True, default="")
-
+    bed = models.ForeignKey(Bed, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return self.name
 
@@ -73,12 +78,7 @@ class Nurse(models.Model):
 
 
 # Bed model
-class Bed(models.Model):
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    is_occupied = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"Bed in {self.department.name} - {'Occupied' if self.is_occupied else 'Available'}"
 
 
 # Revenue model

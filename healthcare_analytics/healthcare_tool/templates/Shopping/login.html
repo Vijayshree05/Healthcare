@@ -1,33 +1,108 @@
 {% extends 'shopping/layouts/main.html' %}
+{% load static %}
 
-
-{% block title %}Login - Healthcare Analytics Tool{% endblock title %}
+{% block title %}
+Login - Healthcare Analytics Tool
+{% endblock title %}
 
 {% block content %}
-<div class="container" style="margin-top:70px;">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="text-center">Login</h2>
-            <hr style="border-color:#b8bfc2;">
-            {% include 'shopping/inc/message.html' %}
-            <hr>
-            <form method="POST">
-                {% csrf_token %}
-                
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" name="username" id="username" required>
-                </div>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" id="password" required>
-                </div>
+<div class="container d-flex align-items-center justify-content-center" style="margin-top: 90px; min-height: 80vh; font-family: 'Poppins', sans-serif;">
+  <div class="glass-card p-5">
 
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-            <p class="mt-3">Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
-        </div>
-    </div>
+    <!-- Heading -->
+    <h2 class="text-center mb-4" style="font-weight: 600; color: #007bff;">
+      <i class="fas fa-sign-in-alt me-2"></i>Login to MediNova
+    </h2>
+
+    <!-- Message Include -->
+    {% include 'shopping/inc/message.html' %}
+    <hr style="border-color:#b8bfc2; margin-bottom: 30px;">
+
+    <!-- Login Form -->
+    <form method="POST">
+      {% csrf_token %}
+
+      <!-- Username -->
+      <div class="mb-4">
+        <label for="username" class="form-label" style="font-weight: 500;">
+          <i class="fas fa-user me-2 text-success"></i>Username
+        </label>
+        <input type="text" class="form-control px-4 py-2 rounded-4" name="username" id="username" required>
+      </div>
+
+      <!-- Password with Eye Toggle -->
+      <div class="mb-4 position-relative">
+        <label for="password" class="form-label" style="font-weight: 500;">
+          <i class="fas fa-lock me-2 text-danger"></i>Password
+        </label>
+        <div class="position-relative">
+            <input type="password" class="form-control px-4 py-2 rounded-4 pe-5" name="password" id="password" required>
+            <i class="fa-solid fa-eye position-absolute" id="toggleIcon"
+               onclick="togglePassword()"
+               style="top: 50%; right: 20px; transform: translateY(-50%); cursor: pointer; color: #555;"></i>
+          </div>
+          
+      </div>
+
+      <!-- Submit Button -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary rounded-4 py-2">
+          <i class="fas fa-sign-in-alt me-2"></i>Login
+        </button>
+      </div>
+    </form>
+
+    <!-- Register Redirect -->
+    <p class="mt-4 text-center">Don't have an account?
+      <a href="{% url 'register' %}" style="color: #0069d9;">Register here</a>
+    </p>
+  </div>
 </div>
+
+<!-- Glassmorphism CSS -->
+<style>
+  .glass-card {
+    position: relative;
+    padding: 40px;
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0);
+    color: #333;
+    width: 90%;
+    max-width: 600px;
+    overflow: hidden;
+    z-index: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("{% static 'images/cardbg.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.3;
+    z-index: -1;
+  }
+</style>
+
+<!-- JS to Toggle Password -->
+<script>
+  function togglePassword() {
+    const passwordField = document.getElementById("password");
+    const icon = document.getElementById("toggleIcon");
+    const isPassword = passwordField.type === "password";
+
+    passwordField.type = isPassword ? "text" : "password";
+    icon.classList.toggle("fa-eye");
+    icon.classList.toggle("fa-eye-slash");
+  }
+</script>
+
 {% endblock content %}

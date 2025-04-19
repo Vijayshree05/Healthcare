@@ -1,0 +1,73 @@
+{% extends 'shopping/layouts/main.html' %}
+{% load static %}
+
+{% block title %}Doctor Details{% endblock title %}
+
+{% block content %}
+<!-- Font Awesome (for icons) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container mt-5 pt-5">
+  <div class="glass-card px-5 py-4 mb-5 shadow-lg">
+
+    <h1 class="text-centers mb-4" style="font-weight: 600; color: #090909;font-size:2rem;text-align:center;">
+      🩺 Doctors in {{ doctors.first.department.name }}
+    </h1>
+
+    {% if doctors %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle shadow-sm">
+        <thead class="table-primary text-center">
+          <tr>
+            <th style="text-align:center;">👨‍⚕️ Doctor Name</th>
+            <th style="text-align:center;"><i class="fas fa-user-injured me-2"></i> Patients Treated</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          {% for doc in doctors %}
+          <tr>
+            <td class="fw-semibold">{{ doc.user.username }}</td>
+            <td>{{ doc.patient_count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-4">
+      No doctor records found.
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- Optional Glass Style -->
+<style>
+  .glass-card {
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  th, td {
+    vertical-align: middle !important;
+  }
+
+  .badge {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+
+  .fw-semibold {
+    font-weight: 600;
+  }
+
+  .text-center {
+    font-size: 1.2rem;
+    font-style: bold;
+    background: rgba(255, 255, 255, 0.8);
+  }
+</style>
+{% endblock content %}

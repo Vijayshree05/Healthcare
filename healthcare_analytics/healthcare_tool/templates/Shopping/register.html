@@ -1,24 +1,137 @@
 {% extends 'shopping/layouts/main.html' %}
+{% load static %}
 
-
-{% block title %}Register - Healthcare Analytics Tool{% endblock title %}
+{% block title %}
+Register - Healthcare Analytics Tool
+{% endblock title %}
 
 {% block content %}
-<div class="container" style="margin-top:70px;">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="text-center"> User Register</h2>
-            <hr style="border-color:#b8bfc2;">
-            {% include 'shopping/inc/message.html' %}
-            <hr>
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-primary">Register</button>
-            </form>
-            
-            <p class="mt-3">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container d-flex align-items-center justify-content-center" style="margin-top: 90px; min-height: 85vh; font-family: 'Poppins', sans-serif;">
+  <div class="glass-card p-5">
+
+    <h2 class="text-center mb-4" style="font-weight: 600; color: #007bff;">
+      <i class="fas fa-user-plus me-2"></i>Register to MediNova
+    </h2>
+
+    {% include 'shopping/inc/message.html' %}
+    <hr style="border-color:#b8bfc2; margin-bottom: 30px;">
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <!-- Username -->
+      <div class="mb-4">
+        <label for="id_username" class="form-label">
+          <i class="fas fa-user text-success me-2"></i>Username
+        </label>
+        {{ form.username }}
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label for="id_email" class="form-label">
+          <i class="fas fa-envelope text-warning me-2"></i>Email
+        </label>
+        {{ form.email }}
+      </div>
+
+      <!-- Password1 -->
+      <div class="mb-4 position-relative">
+        <label for="id_password1" class="form-label">
+          <i class="fas fa-lock text-danger me-2"></i>Password
+        </label>
+        <div class="position-relative">
+          {{ form.password1 }}
+          <i class="fa-solid fa-eye position-absolute toggle-icon"
+             onclick="togglePassword('id_password1', this)"
+             style="top: 50%; right: 20px; transform: translateY(-50%); cursor: pointer;"></i>
         </div>
-    </div>
+      </div>
+
+      <!-- Password2 -->
+      <div class="mb-4 position-relative">
+        <label for="id_password2" class="form-label">
+          <i class="fas fa-lock text-danger me-2"></i>Confirm Password
+        </label>
+        <div class="position-relative">
+          {{ form.password2 }}
+          <i class="fa-solid fa-eye position-absolute toggle-icon"
+             onclick="togglePassword('id_password2', this)"
+             style="top: 50%; right: 20px; transform: translateY(-50%); cursor: pointer;"></i>
+        </div>
+      </div>
+
+      <!-- Role -->
+      <div class="mb-4">
+        <label for="id_role" class="form-label">
+          <i class="fas fa-user-tag text-primary me-2"></i>Role
+        </label>
+        {{ form.role }}
+      </div>
+
+      <!-- Submit -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary rounded-4 py-2">
+          <i class="fas fa-user-plus me-2"></i>Register
+        </button>
+      </div>
+    </form>
+
+    <p class="mt-4 text-center">Already have an account?
+      <a href="{% url 'login' %}" style="color: #0069d9;">Login here</a>
+    </p>
+  </div>
 </div>
+
+<!-- Glassmorphism Styling -->
+<style>
+  .glass-card {
+    position: relative;
+    padding: 40px;
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    color: #333;
+    width: 90%;
+    max-width: 650px;
+    overflow: hidden;
+    z-index: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("{% static 'images/cardbg.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.3;
+    z-index: -1;
+  }
+
+  .toggle-icon {
+    color: #555;
+  }
+
+  input.form-control {
+    padding-right: 45px !important;
+  }
+</style>
+
+<!-- Password Toggle Script -->
+<script>
+  function togglePassword(inputId, icon) {
+    const input = document.getElementById(inputId);
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    icon.classList.toggle('fa-eye');
+    icon.classList.toggle('fa-eye-slash');
+  }
+</script>
 {% endblock content %}

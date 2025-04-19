@@ -3,80 +3,135 @@
 {% block title %}Doctor Dashboard{% endblock title %}
 
 {% block content %}
-<h2 class="mb-4"style="margin-top: 100px"> 👩🏻‍⚕️ Doctor Dashboard</h2>
-{% if patients %}
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Patient Name</th>
-        <th>Status</th>
-        <th>Admitted At</th>
-        <th>Discharged At</th>
-        <th>Update Status</th>
-        <th>Treatment History</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for patient in patients %}
-      <tr>
-        <td>{{ patient.name }}</td>
-        <td>{{ patient.status }}</td>
-        <td>
-          {% if patient.admitted_at %}
-            {{ patient.admitted_at|date:"M d, Y H:i" }}
-          {% else %}
-            Not Admitted
-          {% endif %}
-        </td>
-        <td>
-          {% if patient.discharged_at %}
-            {{ patient.discharged_at|date:"M d, Y H:i" }}
-          {% else %}
-            Not Discharged
-          {% endif %}
-        </td>
-        <td>
-          <form method="POST" class="form-inline">
-            {% csrf_token %}
-            <input type="hidden" name="patient_id" value="{{ patient.id }}">
-            <select name="status" class="form-control mr-2" onchange="toggleBedSelect(this, '{{ patient.id }}')">
-              <option value="outpatient" {% if patient.status == 'outpatient' %}selected{% endif %}>Outpatient</option>
-              <option value="inpatient" {% if patient.status == 'inpatient' %}selected{% endif %}>Inpatient</option>
-            </select>
-            <!-- Bed selection dropdown, visible only when 'inpatient' is selected -->
-            <span id="bed-select-{{ patient.id }}" style="display: {% if patient.status == 'inpatient' %}inline-block{% else %}none{% endif %};">
-              {% if available_beds %}
-                <select name="bed_id" class="form-control mr-2">
-                  {% for bed in available_beds %}
-                    <option value="{{ bed.id }}">Bed {{ bed.id }}</option>
-                  {% endfor %}
-                </select>
+<!-- Font Awesome (for icons) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container mt-5 pt-5">
+  <div class="glass-card px-5 py-4 mb-5 shadow-lg">
+
+    <h1 class="text-centers mb-4" style="font-weight: 600; color: #090909;font-size:2rem;text-align:center;">
+      👩🏻‍⚕️ Doctor Dashboard
+    </h1>
+
+    {% if patients %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle shadow-sm">
+        <thead class="table-primary text-center">
+          <tr>
+            <th>👤 Patient Name</th>
+            <th>📋 Status</th>
+            <th>🏥 Admitted At</th>
+            <th>🏡 Discharged At</th>
+            <th>🔄 Update Status</th>
+            <th>📄 Treatment History</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          {% for patient in patients %}
+          <tr>
+            <td class="fw-semibold">{{ patient.name }}</td>
+            <td>
+              <span class="badge {% if patient.status == 'inpatient' %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ patient.status|title }}
+              </span>
+            </td>
+            <td>
+              {% if patient.admitted_at %}
+                {{ patient.admitted_at|date:"M d, Y H:i" }}
               {% else %}
-                <span class="text-danger">No available beds</span>
+                <span class="text-muted">Not Admitted</span>
               {% endif %}
-            </span>
-            <button type="submit" class="btn btn-primary btn-sm">Update</button>
-          </form>
-        </td>
-        <td>
-          <!-- Link for viewing treatment history (implement 'patient_detail' view as needed) -->
-          <a href="{% url 'patient_detail' patient.id %}" class="btn btn-info btn-sm">View History</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <script>
-    function toggleBedSelect(selectElement, patientId) {
-      var bedSelect = document.getElementById('bed-select-' + patientId);
-      if (selectElement.value === 'inpatient') {
-        bedSelect.style.display = 'inline-block';
-      } else {
-        bedSelect.style.display = 'none';
-      }
-    }
-  </script>
-{% else %}
-  <p>No patients assigned.</p>
-{% endif %}
+            </td>
+            <td>
+              {% if patient.discharged_at %}
+                {{ patient.discharged_at|date:"M d, Y H:i" }}
+              {% else %}
+                <span class="text-muted">Not Discharged</span>
+              {% endif %}
+            </td>
+            <td>
+              <form method="POST" class="d-flex align-items-center justify-content-center flex-wrap gap-2">
+                {% csrf_token %}
+                <input type="hidden" name="patient_id" value="{{ patient.id }}">
+                <select name="status" class="form-select form-select-sm" onchange="toggleBedSelect(this, '{{ patient.id }}')">
+                  <option value="outpatient" {% if patient.status == 'outpatient' %}selected{% endif %}>Outpatient</option>
+                  <option value="inpatient" {% if patient.status == 'inpatient' %}selected{% endif %}>Inpatient</option>
+                </select>
+
+                <span id="bed-select-{{ patient.id }}" style="display: {% if patient.status == 'inpatient' %}inline-block{% else %}none{% endif %};">
+                  {% if available_beds %}
+                    <select name="bed_id" class="form-select form-select-sm">
+                      {% for bed in available_beds %}
+                        <option value="{{ bed.id }}">Bed {{ bed.id }}</option>
+                      {% endfor %}
+                    </select>
+                  {% else %}
+                    <span class="text-danger small">No beds</span>
+                  {% endif %}
+                </span>
+
+                <button type="submit" class="btn btn-sm btn-outline-primary px-3">
+                  <i class="fas fa-save"></i> Update
+                </button>
+              </form>
+            </td>
+            <td>
+              <a href="{% url 'patient_detail' patient.id %}" >
+                <i class="fas fa-notes-medical me-1"></i>View History
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-4">
+      No patients assigned at the moment.
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Toggle Bed Dropdown Script -->
+<script>
+  function toggleBedSelect(selectElement, patientId) {
+    const bedSelect = document.getElementById('bed-select-' + patientId);
+    bedSelect.style.display = selectElement.value === 'inpatient' ? 'inline-block' : 'none';
+  }
+</script>
+
+<!-- Optional Glass Style -->
+<style>
+  .glass-card {
+    /* background: rgba(255, 255, 255, 0.8); */
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  th, td {
+    vertical-align: middle !important;
+  }
+
+  .form-select-sm {
+    width: auto;
+    display: inline-block;
+  }
+
+  .btn-sm {
+    white-space: nowrap;
+  }
+
+  .badge {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+  .text-center{
+    font-size:1.2rem;
+    font-style:bold;
+    background: rgba(255, 255, 255, 0.8)
+  }
+</style>
 {% endblock content %}

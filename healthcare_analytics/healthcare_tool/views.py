@@ -17,14 +17,17 @@ from django.shortcuts import render, redirect
 from .models import Bed, Doctor, Nurse, Revenue, Department, Patient
 import joblib
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
+from django.db.models import Sum,Count
 from django.shortcuts import render, redirect
 from .models import Revenue, Bed, Doctor, Department
 import joblib
 import os
 import json
 import pandas as pd
-
+import seaborn as sns
+import matplotlib.dates as mdates
+import plotly.graph_objs as go
+import plotly.offline as opy
 
 # Home page
 def home(request):
@@ -191,7 +194,7 @@ def doctor_dashboard(request):
         patient = get_object_or_404(Patient, id=patient_id)
         old_status = patient.status  # Capture previous status
         patient.status = new_status
-        
+        bed_id = request.POST.get('bed_id')
         if new_status == 'inpatient':
             # Set admitted_at timestamp if not already set
             if not patient.admitted_at:
@@ -203,6 +206,7 @@ def doctor_dashboard(request):
                     bed = Bed.objects.get(id=bed_id, department=doctor.department, is_occupied=False)
                     bed.is_occupied = True
                     bed.save()
+                    patient.bed = bed 
                 except Bed.DoesNotExist:
                     messages.error(request, "Selected bed is not available.")
                     return redirect('doctor_dashboard')
@@ -212,6 +216,7 @@ def doctor_dashboard(request):
                 if bed:
                     bed.is_occupied = True
                     bed.save()
+                    patient.bed = bed 
                 else:
                     messages.error(request, "No available beds in your department.")
                     return redirect('doctor_dashboard')
@@ -221,7 +226,11 @@ def doctor_dashboard(request):
             # If patient transitions from inpatient to outpatient, record discharge time if not set
             if old_status == 'inpatient' and not patient.discharged_at:
                 patient.discharged_at = timezone.now()
-        
+            if patient.bed:
+                patient.bed.is_occupied = False
+                patient.bed.save()
+                patient.bed = None
+
         patient.save()
         messages.success(request, "Patient status updated successfully.")
         return redirect('doctor_dashboard')
@@ -231,7 +240,48 @@ def doctor_dashboard(request):
         'available_beds': available_beds,
     }
     return render(request, 'shopping/doctor_dashboard.html', context)
+def beds_detail(request):
+   department_id = request.GET.get('department')
+   if department_id:
+    selected_department = get_object_or_404(Department, id=department_id)
+    beds = Bed.objects.filter(department=selected_department)
+   else:
+    selected_department = None
+    beds = Bed.objects.all()
+   context = {
+    'beds': beds,
+    'selected_department': selected_department,
+    }
+   return render(request, 'shopping/bed_details.html', context)
+ 
+def occupied_beds_detail(request):
+    return render(request, 'shopping/detail_pages/occupied_beds.html')
+ 
+def doctors_detail(request):
+   department_id = request.GET.get('department')  # from the URL param
+   if department_id:
+    doctors = Doctor.objects.filter(department_id=department_id)
+   else:
+    doctors = Doctor.objects.all()
+   doctors = doctors.annotate(patient_count=Count('patient'))
+   context = {
+        'doctors': doctors,
+    }
+   return render(request, 'shopping/doctor_details.html', context)
+def patients_detail(request):
+    department_id = request.GET.get('department')  # Get department ID from URL
+    if department_id:
+        patients = Patient.objects.select_related('doctor__user', 'doctor__department') \
+                                  .filter(doctor__department_id=department_id)
+    else:
+        patients = Patient.objects.select_related('doctor__user', 'doctor__department').all()
 
+    context = {
+        'patients': patients,
+    }
+    return render(request, 'shopping/patients_details.html', context)
+def nurses_detail(request):
+    return render(request, 'shopping/detail_pages/nurses.html')
 
 
 # Nurse dashboard (for updating patient details including medication)
@@ -273,59 +323,98 @@ def admin_dashboard(request):
         total_beds = Bed.objects.filter(department=selected_department).count()
         total_doctors = Doctor.objects.filter(department=selected_department).count()
         occupied_beds = Bed.objects.filter(is_occupied=True, department=selected_department).count()
-        total_nurses = Nurse.objects.count() 
+        total_nurses = Nurse.objects.count()
     else:
         total_beds = Bed.objects.count()
         occupied_beds = Bed.objects.filter(is_occupied=True).count()
         total_doctors = Doctor.objects.count()
         total_patients = Patient.objects.count()
-        total_nurses = Nurse.objects.count() 
+        total_nurses = Nurse.objects.count()
+
     # Predict future bed occupancy
     future_dates = pd.date_range(start=pd.Timestamp.today(), periods=num_days)
     future_days_of_year = future_dates.dayofyear
     future_X_beds = pd.DataFrame({'DayOfYear': future_days_of_year, 'TotalBeds': [total_beds] * num_days})
-    
-    future_predictions_beds = bed_model.predict(future_X_beds)
 
-    # Estimate staff requirements (assuming 1 staff per 3 occupied beds)
+    future_predictions_beds = bed_model.predict(future_X_beds)
     future_predictions_staff = (future_predictions_beds / 3).round(0).astype(int)
 
-    # Save predictions for display
     df_future = pd.DataFrame({
         'Date': future_dates,
         'PredictedBedsOccupied': future_predictions_beds.round(0).astype(int),
         'PredictedStaffRequired': future_predictions_staff
     })
 
-    # Ensure 'static/images/' directory exists before saving the plot
-    plot_dir = r"C:\Users\WELCOME\OneDrive\Desktop\Healthcare_Tool\healthcare_analytics\static"
-    os.makedirs(plot_dir, exist_ok=True)  # Create directory if it doesn't exist
-    plot_path = os.path.join(plot_dir, "bed_prediction.png")
+    # Create interactive Plotly chart
+    trace1 = go.Scatter(
+        x=df_future['Date'],
+        y=df_future['PredictedBedsOccupied'],
+        mode='lines+markers',
+        name='Beds Occupied',
+        line=dict(color='#a7f3d0', width=3),
+        fill='tozeroy',
+        hoverinfo='x+y',
+         marker=dict(size=9.5) 
+    )
 
-    # Plot results
-    plt.figure(figsize=(10, 5))
-    plt.plot(df_future['Date'], df_future['PredictedBedsOccupied'], marker='o', linestyle='-', color='b', label='Beds')
-    plt.plot(df_future['Date'], df_future['PredictedStaffRequired'], marker='s', linestyle='-', color='r', label='Staff')
-    plt.xlabel("Date")
-    plt.ylabel("Predicted Values")
-    plt.title(f"Predicted Bed and Staff Requirement ({num_days} Days)")
-    plt.xticks(rotation=45)
-    plt.legend()
-    plt.grid(True)
-    plt.savefig(plot_path)
-    plt.close()
+    trace2 = go.Scatter(
+        x=df_future['Date'],
+        y=df_future['PredictedStaffRequired'],
+        mode='lines+markers',
+        name='Staff Required',
+        line=dict(color='#d8b4fe', width=3),
+        fill='tozeroy',
+        hoverinfo='x+y',
+        marker=dict(size=9.5) 
+    )
+
+    layout = go.Layout(
+    title=dict(
+        text=f"Predicted Bed Occupancy & Staff Requirement - Next {num_days} Days",
+        font=dict(
+            size=24,
+            family="Segoe UI, sans-serif",
+            color="#111",
+        ),
+        x=0.5,
+        xanchor='center'
+    ),
+    xaxis=dict(
+        title='Date',
+        tickfont=dict(
+            size=16,
+            family="Segoe UI, sans-serif",
+            color="#111"
+        ),
+    ),
+    yaxis=dict(
+        title='Predicted Count',
+        tickfont=dict(
+            size=16,
+            family="Segoe UI, sans-serif",
+            color="#111"
+        ),
+    ),
+    template='plotly_white',
+    hovermode='x unified',
+    legend=dict(x=0.01, y=0.99),
+    margin=dict(l=40, r=40, t=50, b=40)
+)
+
+
+    fig = go.Figure(data=[trace1, trace2], layout=layout)
+    plot_div = opy.plot(fig, auto_open=False, output_type='div')
 
     context = {
         'allocated_beds': occupied_beds,
         'total_beds': total_beds,
-       # 'future_beds_required': int(future_predictions_beds[-1]),
-        'total_doctors':total_doctors,
-        'total_patients':total_patients,
-        'total_nurses':total_nurses,
+        'total_doctors': total_doctors,
+        'total_patients': total_patients,
+        'total_nurses': total_nurses,
         'departments': Department.objects.all(),
         'selected_department': selected_department,
         'days': num_days,
-        'plot_path': plot_path
+        'plot_div': plot_div,
     }
 
     return render(request, 'shopping/admin_dashboard.html', context)

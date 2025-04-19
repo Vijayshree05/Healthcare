@@ -1,22 +1,79 @@
 {% extends 'shopping/layouts/main.html' %}
+{% load static %}
 
 {% block title %}Update Medication{% endblock title %}
 
 {% block content %}
-<section class="bg-light p-4">
-    <h2 class="text-center">Update Medication for {{ patient.name }}</h2>
-    <hr>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container d-flex align-items-center justify-content-center" style="margin-top: 90px; min-height: 80vh; font-family: 'Poppins', sans-serif;">
+  <div class="glass-card p-5">
+
+    <!-- Heading -->
+    <h2 class="text-center mb-4" style="font-weight: 600; color: #095c34;">
+      <i class="fas fa-pills me-2"></i>Update Medication for {{ patient.name }}
+    </h2>
+
+    <hr style="border-color:#b8bfc2; margin-bottom: 30px;">
+
+    <!-- Update Form -->
     <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label">Current Medication: </label>
-            <input type="text" class="form-control" value="{{ patient.medication }}" disabled>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">New Medication:</label>
-            <input type="text" class="form-control" name="medication" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Update Medication</button>
+      {% csrf_token %}
+
+      <!-- Current Medication -->
+      <div class="mb-4">
+        <label class="form-label" style="font-weight: 600; font-size: 1.3rem;">
+          <i class="fas fa-prescription-bottle-alt me-2 text-warning"></i>Current Medication:
+        </label>
+        <input type="text" class="form-control px-4 py-2 rounded-4" value="{{ patient.medication }}" disabled>
+      </div>
+
+      <!-- New Medication -->
+      <div class="mb-4">
+        <label class="form-label" style="font-weight: 600; font-size: 1.3rem;">
+          <i class="fas fa-notes-medical me-2 text-primary"></i>New Medication:
+        </label>
+        <input type="text" class="form-control px-4 py-2 rounded-4" name="medication" required>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success rounded-4 py-2">
+          <i class="fas fa-save me-2"></i>Update Medication
+        </button>
+      </div>
     </form>
-</section>
+
+  </div>
+</div>
+
+<!-- Glassmorphism CSS -->
+<style>
+  .glass-card {
+    position: relative;
+    padding: 40px;
+    border-radius: 50px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0);
+    color: #333;
+    width: 90%;
+    max-width: 600px;
+    overflow: hidden;
+    z-index: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("{% static 'images/cardbg.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.01;
+    z-index: -1;
+  }
+</style>
 {% endblock content %}

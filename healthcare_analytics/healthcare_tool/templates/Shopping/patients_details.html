@@ -1,0 +1,86 @@
+{% extends 'shopping/layouts/main.html' %}
+{% load static %}
+
+{% block title %}Patient Details{% endblock title %}
+
+{% block content %}
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="container mt-5 pt-5">
+  <div class="glass-card px-5 py-4 mb-5 shadow-lg">
+
+    <h1 class="mb-4 text-centers" style="font-weight: 600; color: #090909; font-size: 2rem;text-align:center;">
+      <i class="fas fa-user-injured me-2"></i> Patient Details
+    </h1>
+
+    {% if patients %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle shadow-sm">
+        <thead class="table-primary text-center">
+          <tr>
+            <th>👤 Patient Name</th>
+            <th> <i class="fas fa-hourglass-start me-2 text-success"></i>Age</th>
+            <th><i class="fas fa-venus-mars me-2 text-warning"></i> Gender</th>
+            <th style="text-align:center;">🤒 Symptoms</th>
+            <th>📋 Status</th>
+            <th>🩺 Doctor</th>
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          {% for patient in patients %}
+          <tr>
+            <td class="fw-semibold">{{ patient.name }}</td>
+            <td>{{ patient.age }}</td>
+            <td>{{ patient.gender }}</td>
+            <td>{{ patient.symptoms }}</td>
+            <td>
+              <span class="badge {% if patient.status == 'inpatient' %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ patient.status|title }}
+              </span>
+            </td>
+            <td>
+              {% if patient.doctor %}
+                {{ patient.doctor.user.username }}
+              {% else %}
+                <span class="text-muted">N/A</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-4">
+      No patients found.
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Optional Glass Style -->
+<style>
+  .glass-card {
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  th, td {
+    vertical-align: middle !important;
+  }
+
+  .badge {
+    font-size: 1rem;
+    padding: 6px 12px;
+  }
+
+  .text-center {
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.8);
+  }
+</style>
+{% endblock content %}
